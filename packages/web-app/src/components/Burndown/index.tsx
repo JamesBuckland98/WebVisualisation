@@ -2,9 +2,9 @@ import { Component, h } from 'preact';
 import { ReactPropTypes } from 'react';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-import { isHidden } from '@amcharts/amcharts4/.internal/core/utils/DOM';
+import graph from 'assets/icons/bar-chart.png';
 
-type MyState = { chart: any; showChart: boolean; buttonText: string };
+type MyState = { chart: any; showChart: boolean };
 
 class BurnDown extends Component<{}, MyState> {
     constructor(props: ReactPropTypes) {
@@ -12,7 +12,6 @@ class BurnDown extends Component<{}, MyState> {
         this.state = {
             chart: '',
             showChart: false,
-            buttonText: 'Show Chart',
         };
     }
 
@@ -83,17 +82,13 @@ class BurnDown extends Component<{}, MyState> {
         this.setState({
             showChart: !this.state.showChart,
         });
-        console.log(this.state.showChart);
     }
 
     render() {
         return (
             <div>
-                <button
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-                    onClick={() => this.toggleChart()}
-                >
-                    {this.state.buttonText}
+                <button className="toggle-chart" onClick={() => this.toggleChart()}>
+                    <img src={graph} />
                 </button>
                 {this.state.showChart ? (
                     <div id="chartdiv" style={{ width: '100%', height: '500px' }}></div>
