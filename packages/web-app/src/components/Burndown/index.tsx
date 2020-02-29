@@ -2,7 +2,9 @@ import { Component, h } from 'preact';
 import { ReactPropTypes } from 'react';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
+import am4themes_animated from '@amcharts/amcharts4/themes/animated'; // eslint-disable-line
 import graph from 'assets/icons/bar-chart.png';
+import { xAxis, yAxis, lineSeries, scrollbar, chartCursor } from './config';
 
 type MyState = { chart: any; showChart: boolean };
 
@@ -16,57 +18,44 @@ class BurnDown extends Component<{}, MyState> {
     }
 
     componentDidMount() {
-        const chart = am4core.create('chartdiv', am4charts.XYChart);
-        // chart config goes here
-        const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        dateAxis.startLocation = 0;
-        dateAxis.endLocation = 1;
-        dateAxis.title.text = 'Time';
-        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-        valueAxis.title.text = 'Issues';
-        valueAxis.cursorTooltipEnabled = false;
-        const series = chart.series.push(new am4charts.LineSeries());
-        series.name = 'Burn Down';
-        series.stroke = am4core.color('#CDA2AB');
-        series.strokeWidth = 3;
-        series.dataFields.dateX = 'date';
-        series.dataFields.valueY = 'value';
-        series.tooltipText = '[bold]{valueY}[/]';
-        const circleBullet = series.bullets.push(new am4charts.CircleBullet());
-        circleBullet.circle.stroke = am4core.color('#CDA2AB');
-        circleBullet.circle.strokeWidth = 2;
-        chart.cursor = new am4charts.XYCursor();
-        chart.cursor.lineY.opacity = 0;
-        const scrollbarX = new am4charts.XYChartScrollbar();
-        scrollbarX.series.push(series);
-        chart.scrollbarX = scrollbarX;
-        // chart data (this will be changed to use real data once connected to API)
-        chart.data = [
+        am4core.useTheme(am4themes_animated);
+        const chart = am4core.createFromConfig(
             {
-                date: new Date(2020, 1, 20),
-                value: 10,
+                data: [
+                    {
+                        date: new Date(2020, 1, 20),
+                        value: 10,
+                    },
+                    {
+                        date: new Date(2020, 1, 21),
+                        value: 9,
+                    },
+                    {
+                        date: new Date(2020, 1, 22),
+                        value: 7,
+                    },
+                    {
+                        date: new Date(2020, 1, 23),
+                        value: 4,
+                    },
+                    {
+                        date: new Date(2020, 1, 24),
+                        value: 3,
+                    },
+                    {
+                        date: new Date(2020, 1, 25),
+                        value: 0,
+                    },
+                ],
+                xAxes: [xAxis],
+                yAxes: [yAxis],
+                series: [lineSeries],
+                scrollbarX: scrollbar,
+                cursor: chartCursor,
             },
-            {
-                date: new Date(2020, 1, 21),
-                value: 9,
-            },
-            {
-                date: new Date(2020, 1, 22),
-                value: 7,
-            },
-            {
-                date: new Date(2020, 1, 23),
-                value: 4,
-            },
-            {
-                date: new Date(2020, 1, 24),
-                value: 3,
-            },
-            {
-                date: new Date(2020, 1, 25),
-                value: 0,
-            },
-        ];
+            'chartdiv',
+            am4charts.XYChart,
+        );
         this.setState({
             chart: chart,
         });
