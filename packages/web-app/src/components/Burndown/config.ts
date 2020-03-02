@@ -1,7 +1,4 @@
-import { Axis } from 'models/Chart';
-import { Series } from 'models/Chart';
-import { ScrollbarX } from 'models/Chart';
-import { Cursor } from 'models/Chart';
+import { Axis, Series, ScrollbarX, Cursor } from 'models/Chart';
 
 export const xAxis: Axis = {
     type: 'DateAxis',

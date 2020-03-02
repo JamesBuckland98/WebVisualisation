@@ -1,5 +1,5 @@
 import { Fragment, FunctionalComponent, h } from 'preact';
-
+import BurnDown from 'components/Burndown';
 import { IssueCard } from 'components/Cards/issue';
 import { issues } from 'data';
 
@@ -9,6 +9,7 @@ const IssuesBoard: FunctionalComponent = () => {
             <div className="create-bar">
                 <h1 className="page-heading">Issues Board</h1>
             </div>
+            <BurnDown />
             <div className="issue-board">
                 <div className="issue-list">
                     <div className="issue-list-title-holder bg-red-300">
