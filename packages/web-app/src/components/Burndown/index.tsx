@@ -1,26 +1,16 @@
-import { Component, h } from 'preact';
+import { Fragment, FunctionalComponent, h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
 import { createFromConfig, useTheme } from '@amcharts/amcharts4/core';
 import { XYChart } from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graph from 'assets/icons/bar-chart.png';
 import { xAxis, yAxis, lineSeries, scrollbar, chartCursor } from './config';
 
-interface ComponentState {
-    chart: any;
-    showChart: boolean;
-}
-
-class BurnDown extends Component<{}, ComponentState> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            chart: '',
-            showChart: false,
-        };
-    }
-
-    componentDidMount(): void {
-        useTheme(am4themesAnimated);
+const BurnDown: FunctionalComponent = () => {
+    const [BurnDownChart, setBurnDownChart] = useState(null);
+    const [showChart, setShowchart] = useState(false);
+    useTheme(am4themesAnimated);
+    useEffect(() => {
         const chart = createFromConfig(
             {
                 data: [
@@ -58,40 +48,25 @@ class BurnDown extends Component<{}, ComponentState> {
             'chartdiv',
             XYChart,
         );
-        this.setChart(chart);
-    }
+        setBurnDownChart(chart);
+    }, [showChart]);
 
-    componentWillUnmount(): void {
-        if (this.state.chart) {
-            this.state.chart.dispose();
-        }
-    }
+    const toggleChart = (): void => {
+        setShowchart(!showChart);
+    };
 
-    setChart(chart: any): void {
-        this.setState({
-            chart,
-        });
-    }
-    toggleChart(): void {
-        this.setState({
-            showChart: !this.state.showChart,
-        });
-    }
-
-    render(): JSX.Element {
-        return (
-            <div>
-                <button className="toggle-chart" title="Toggle Chart" onClick={(): void => this.toggleChart()}>
-                    <img src={graph} />
-                </button>
-                {this.state.showChart ? (
-                    <div id="chartdiv" style={{ width: '100%', height: '500px' }} />
-                ) : (
-                    <div id="chartdiv" style="display: none;" />
-                )}
-            </div>
-        );
-    }
-}
+    return (
+        <Fragment>
+            <button className="toggle-chart" title="Toggle Chart" onClick={(): void => toggleChart()}>
+                <img src={graph} />
+            </button>
+            {showChart ? (
+                <div id="chartdiv" style={{ width: '100%', height: '500px' }} />
+            ) : (
+                <div id="chartdiv" style="display: none;" />
+            )}
+        </Fragment>
+    );
+};
 
 export default BurnDown;

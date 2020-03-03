@@ -1,5 +1,5 @@
 import { Fragment, FunctionalComponent, h } from 'preact';
-import BurnDown from 'components/Burndown/functionalComponent';
+import BurnDown from 'components/Burndown';
 import { IssueCard } from 'components/Cards/issue';
 import { issues } from 'data';
 
