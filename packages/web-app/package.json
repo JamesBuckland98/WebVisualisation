@@ -24,7 +24,7 @@
     ]
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.9.3",
+    "@amcharts/amcharts4": "^4.9.4",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^1.5.2",
     "preact": "^10.3.3",
