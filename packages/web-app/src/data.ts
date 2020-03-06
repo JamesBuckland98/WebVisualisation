@@ -49,3 +49,30 @@ export const issues: Issue[] = [
         project: 'Unicorn Project',
     },
 ];
+
+export const chartData = [
+    {
+        date: new Date(2020, 1, 20),
+        value: 10,
+    },
+    {
+        date: new Date(2020, 1, 21),
+        value: 9,
+    },
+    {
+        date: new Date(2020, 1, 22),
+        value: 7,
+    },
+    {
+        date: new Date(2020, 1, 23),
+        value: 4,
+    },
+    {
+        date: new Date(2020, 1, 24),
+        value: 3,
+    },
+    {
+        date: new Date(2020, 1, 25),
+        value: 0,
+    },
+];
