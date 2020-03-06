@@ -8,12 +8,8 @@
     "build": "preact build --no-esm --no-prerender",
     "analyze": "preact build --no-esm --no-prerender --analyze",
     "lint": "eslint src/**/*.{js,ts,tsx} --fix",
-    "prettier": "prettier src/**/*.{css,scss,json} --write"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "prettier": "prettier src/**/*.{css,scss,json} --write",
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{css,md,scss}": [
@@ -24,13 +20,14 @@
     ]
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.9.4",
+    "@types/recharts": "^1.8.7",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^1.5.2",
     "preact": "^10.3.3",
     "preact-feather": "^4.1.0",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
+    "recharts": "^1.8.5",
     "tailwindcss": "^1.2.0",
     "ts-api-toolkit": "^2.0.0"
   },
