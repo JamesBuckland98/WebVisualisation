@@ -3,18 +3,18 @@ import team from 'assets/icons/team.png';
 import kanbanBoard from 'assets/icons/kanbanBoard.png';
 import metrics from 'assets/icons/metrics.png';
 import presentation from 'assets/icons/presentation.png';
-import { SideBarItem } from 'models/SideBarItem';
+import { SideBarLink } from 'models/SideBarLink';
 
-export const sideNavItems: SideBarItem[] = [
-    {
-        label: 'Daily Stand-up',
-        icon: team,
-        path: '/',
-    },
+export const sideNavItems: SideBarLink[] = [
     {
         label: 'Issues Board',
         icon: kanbanBoard,
-        path: '/issues',
+        path: '/',
+    },
+    {
+        label: 'Daily Stand-up',
+        icon: team,
+        path: '/dailyStandUp',
     },
     {
         label: 'Metrics',
@@ -24,7 +24,7 @@ export const sideNavItems: SideBarItem[] = [
     {
         label: 'Show and Tell',
         icon: presentation,
-        path: '/showandtell',
+        path: '/showAndTell',
     },
     {
         label: 'Edit',

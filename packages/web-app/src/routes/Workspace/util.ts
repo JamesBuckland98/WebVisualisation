@@ -2,18 +2,18 @@ import edit from 'assets/icons/edit.png';
 import list from 'assets/icons/list.png';
 import metrics from 'assets/icons/metrics.png';
 import sprinter from 'assets/icons/sprinter.png';
-import { SideBarItem } from 'models/SideBarItem';
+import { SideBarLink } from 'models/SideBarLink';
 
-export const sideNavItems: SideBarItem[] = [
-    {
-        label: 'Backlog Planning',
-        icon: list,
-        path: '/',
-    },
+export const sideNavItems: SideBarLink[] = [
     {
         label: 'Sprint Planning',
         icon: sprinter,
-        path: '/sprintPlanning',
+        path: '/',
+    },
+    {
+        label: 'Backlog Planning',
+        icon: list,
+        path: '/backlogPlanning',
     },
     {
         label: 'Metrics',
