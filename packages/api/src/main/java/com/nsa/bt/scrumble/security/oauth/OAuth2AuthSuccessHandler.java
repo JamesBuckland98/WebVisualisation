@@ -60,6 +60,7 @@ public class OAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 .map(Cookie::getValue);
 
         if (redirectUri.isPresent()) {
+            span.finish();
             throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
         }
 
@@ -68,6 +69,7 @@ public class OAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         String token = tokenProvider.createToken(userPrincipal.getId(), appProperties.getAuth().getShortLifeTokenExpirationMsec(), span);
 
+        span.finish();
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)
                 .build().toUriString();
