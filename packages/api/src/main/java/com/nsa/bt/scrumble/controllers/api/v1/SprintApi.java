@@ -92,8 +92,12 @@ public class SprintApi {
         Span span = ApiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/sprint").start();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
-        return accessTokenOptional.<ResponseEntity<Object>>map(s ->
-                ResponseEntity.ok().body(sprintService.getSprintIssues(workspaceId, sprint, s, span))).orElseGet(() ->
-                ResponseEntity.status(400).body(authErrorMsg));
+        if (accessTokenOptional.isPresent()) {
+            var issues = sprintService.getSprintIssues(workspaceId, sprint, s, span))
+            span.finish();
+            return ResponseEntity.ok().body(issues);
+        }
+        span.finish();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", authErrorMsg));
     }
 }
