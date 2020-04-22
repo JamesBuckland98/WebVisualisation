@@ -42,8 +42,7 @@ export const CreateOrEditSprint: FunctionalComponent<IProps> = (props: IProps) =
     };
 
     const generateDate = (dateValue: string): Date => {
-        const date = new Date(dateValue);
-        date.setDate(date.getDate() + 1);
+        const date = new Date(dateValue.replace(/-/g, '/'));
         return date;
     };
 
