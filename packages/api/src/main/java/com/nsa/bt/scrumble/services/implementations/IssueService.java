@@ -93,6 +93,7 @@ public class IssueService implements IIssueService {
         for (Project project : projects) {
             if (issue.getProjectId() == project.getId()) {
                 issue.setProjectName(project.getName());
+                span.finish();
                 return;
             }
         }
