@@ -164,6 +164,7 @@ public class SprintService implements ISprintService {
             });
             allIssues.addAll(issues);
         }
+        span.finish();
         return allIssues;
     }
 
