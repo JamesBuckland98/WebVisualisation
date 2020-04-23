@@ -26,10 +26,12 @@ public class WorkspaceService implements IWorkspaceService {
 
     @Autowired
     private IWorkspaceRepository workspaceRepository;
+    @Autowired
+    ServiceTracer serviceTracer;
 
     @Override
     public List<Workspace> getAllWorkspaces(Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get all Workspaces").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get all Workspaces").asChildOf(parentSpan).start();
         var allWorkspaces = workspaceRepository.getAllWorkspaces(span);
         span.finish();
         return allWorkspaces;
@@ -37,7 +39,7 @@ public class WorkspaceService implements IWorkspaceService {
 
     @Override
     public ArrayList<Integer> getProjectIdsForWorkspace(int workspaceId, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Project IDs for a given Workspace").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Project IDs for a given Workspace").asChildOf(parentSpan).start();
         var projectIds = workspaceRepository.projectIdsForWorkspace(workspaceId, span);
         span.finish();
         return projectIds;
@@ -45,7 +47,7 @@ public class WorkspaceService implements IWorkspaceService {
 
     @Override
     public Workspace createWorkspace(Workspace workspace, User user, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Create Workspace").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Create Workspace").asChildOf(parentSpan).start();
         workspace = workspaceRepository.createWorkspace(workspace, user, span);
         span.finish();
         return workspace;
@@ -53,14 +55,14 @@ public class WorkspaceService implements IWorkspaceService {
 
     @Override
     public void editWorkspace(Workspace updatedWorkspace, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Edit Workspace").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Edit Workspace").asChildOf(parentSpan).start();
         workspaceRepository.editWorkspace(updatedWorkspace, span);
         span.finish();
     }
 
     @Override
     public List<Project> getWorkspaceProjects(int workspaceId, String accessToken, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get all Workspace Projects").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get all Workspace Projects").asChildOf(parentSpan).start();
         ArrayList<Integer> projectIds = workspaceRepository.projectIdsForWorkspace(workspaceId, span);
         List<Project> result = new ArrayList<>();
         for (int projectId : projectIds) {
@@ -74,7 +76,7 @@ public class WorkspaceService implements IWorkspaceService {
 
     @Override
     public void setWorkspaceUsers(Workspace workspace, Optional<String> accessToken, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Set Workspace Users").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Set Workspace Users").asChildOf(parentSpan).start();
         List<User> allUsers = new ArrayList<>();
         Hashtable<User, ArrayList<Integer>> usersProjectIds = new Hashtable<>();
 
@@ -113,7 +115,7 @@ public class WorkspaceService implements IWorkspaceService {
     }
 
     private HttpEntity<String> getApplicationJsonHeaders(Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Application Headers").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Application Headers").asChildOf(parentSpan).start();
         var headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         span.finish();
