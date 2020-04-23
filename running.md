@@ -17,6 +17,8 @@ Flyway 6.3.2 (optional)
 
 ### Running in Production
 
+Look in each sub-project for running in a development context.
+
 #### API Server
 
 Firstly, you will need to copy some files from your development or CI system to prepare for deployment. You will need the Jar file, the [Flyway configuration file](packages/api/flyway.conf), the [database migrations](packages/api/src/main/resources/db/migration), the [Dockerfile](packages/api/Dockerfile), and the [docker-compose-prod.yml](packages/api/docker-compose-prod.yml). I recommend copying the migrations files to `db-migrations`, and the docker-compose file to `docker-compose`.
