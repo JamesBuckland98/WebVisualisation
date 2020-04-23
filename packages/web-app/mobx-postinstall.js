@@ -1,3 +1,8 @@
+// This file is necessary solely because Preact does not emit a few obscure React types that
+// MobX uses. Since you cannot alias TS types, we already needed @types/react (just in order
+// to compile, wasn't actually used), we figured we may as well just link to the correct types,
+// rather than try to reimplement.
+
 const fs = require('fs');
 
 const opts = {
