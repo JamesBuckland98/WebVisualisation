@@ -29,9 +29,12 @@ public class WorkspaceApi {
     @Value("${app.msg.error.auth}")
     private String authErrorMsg;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     @GetMapping("/workspaces")
     public ResponseEntity<Object> getAllWorkspaces() {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /workspaces").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /workspaces").start();
         var workspaces = workspaceService.getAllWorkspaces(span);
         span.finish();
         return ResponseEntity.ok().body(workspaces);
@@ -39,7 +42,7 @@ public class WorkspaceApi {
 
     @GetMapping("/workspace/{id}/projects")
     public ResponseEntity<Object> getWorkspaceProjects(Authentication authentication, @PathVariable(value = "id") int workspaceId) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/projects").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/projects").start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         var projects = accessTokenOptional.<ResponseEntity<Object>>map(s ->
@@ -52,7 +55,7 @@ public class WorkspaceApi {
 
     @PostMapping("/workspace")
     public ResponseEntity<Object> createWorkspace(Authentication authentication, @RequestBody Workspace workspace) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP POST /workspace").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP POST /workspace").start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         if (accessTokenOptional.isPresent()) {
@@ -71,7 +74,7 @@ public class WorkspaceApi {
 
     @PutMapping("/workspace/{id}")
     public ResponseEntity<Object> editWorkspace(Authentication authentication, @RequestBody Workspace workspace) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspace.getId()).start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspace.getId()).start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         if (accessTokenOptional.isPresent()) {

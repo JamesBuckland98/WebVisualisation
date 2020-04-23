@@ -38,9 +38,12 @@ public class UserDetailsApi {
     @Value("${app.msg.error.auth}")
     private String authErrorMsg;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     @GetMapping("/user/info")
     public ResponseEntity<Object> getUserInfo(Authentication authentication) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /user/info").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /user/info").start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
 

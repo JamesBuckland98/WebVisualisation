@@ -37,13 +37,16 @@ public class AuthenticationApi {
     @Autowired
     private TokenUtils tokenUtils;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     public AuthenticationApi(AppProperties appProperties) {
         this.appProperties = appProperties;
     }
 
     @GetMapping("/auth/token")
     public ResponseEntity<Object> exchangeShortLifeToken(HttpServletRequest request) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /auth/token").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /auth/token").start();
         String jwt = tokenUtils.getJwtFromRequest(request, span);
         String token = "";
 
@@ -64,7 +67,7 @@ public class AuthenticationApi {
 
     @DeleteMapping("/auth/token")
     public ResponseEntity<Object> deleteToken(Authentication authentication) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP DELETE /auth/token").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP DELETE /auth/token").start();
 
         try {
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();

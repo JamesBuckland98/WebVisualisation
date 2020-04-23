@@ -30,6 +30,9 @@ public class OAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private final AppProperties appProperties;
 
+    @Autowired
+    private SecurityTracer securityTracer;
+
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Autowired
@@ -55,7 +58,7 @@ public class OAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     }
 
     protected String determineTargetUrl(HttpServletRequest request, Authentication authentication) {
-        var span = SecurityTracer.getTracer().buildSpan("Determine Target URL").start();
+        var span = securityTracer.getTracer().buildSpan("Determine Target URL").start();
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 

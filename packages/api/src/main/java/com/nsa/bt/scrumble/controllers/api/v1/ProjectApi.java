@@ -34,9 +34,12 @@ public class ProjectApi {
     @Value("${app.msg.error.auth}")
     private String authErrorMsg;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     @GetMapping("/projects")
     public ResponseEntity<Object> getIssues(Authentication auth) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /projects").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /projects").start();
 
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
