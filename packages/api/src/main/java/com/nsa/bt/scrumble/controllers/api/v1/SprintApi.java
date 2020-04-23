@@ -28,13 +28,16 @@ public class SprintApi {
     @Value("${app.msg.error.auth}")
     private String authErrorMsg;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     @GetMapping("/workspace/{workspaceId}/sprints")
     public ResponseEntity<Object> getWorkspaceSprints(
             Authentication auth,
             @PathVariable(value = "workspaceId") int workspaceId,
             @RequestParam(value = "filter") String filter
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/sprints").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/sprints").start();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         if (accessTokenOptional.isPresent()) {
@@ -52,7 +55,7 @@ public class SprintApi {
             @PathVariable(value = "workspaceId") int workspaceId,
             @RequestBody Sprint sprint
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP POST /workspace/" + workspaceId + "/sprint").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP POST /workspace/" + workspaceId + "/sprint").start();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         var response = accessTokenOptional.<ResponseEntity<Object>>map(s ->
@@ -69,7 +72,7 @@ public class SprintApi {
             @PathVariable(value = "workspaceId") int workspaceId,
             @RequestBody Sprint sprint
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/sprint").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/sprint").start();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         if (accessTokenOptional.isPresent()) {
@@ -89,7 +92,7 @@ public class SprintApi {
             @RequestBody Sprint sprint
     ) {
         // Just here to fulfill mandatory reqs, not actually used.
-        Span span = ApiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/sprint").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/sprint").start();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
         if (accessTokenOptional.isPresent()) {

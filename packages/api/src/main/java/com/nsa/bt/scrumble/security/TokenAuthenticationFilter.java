@@ -33,6 +33,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private SecurityTracer securityTracer;
+
     @Bean
     public TokenUtils tokenUtils() {
         return new TokenUtils();
@@ -41,7 +44,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        var span = SecurityTracer.getTracer().buildSpan("Do Filter Internal").start();
+        var span = securityTracer.getTracer().buildSpan("Do Filter Internal").start();
         try {
             String jwt = tokenUtils.getJwtFromRequest(request, span);
 

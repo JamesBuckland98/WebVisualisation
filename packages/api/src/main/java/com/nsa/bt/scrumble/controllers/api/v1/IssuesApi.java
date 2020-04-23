@@ -41,6 +41,9 @@ public class IssuesApi {
     @Autowired
     private IWorkspaceService workspaceService;
 
+    @Autowired
+    private ApiTracer apiTracer;
+
     @GetMapping("/workspace/{id}/issues")
     public ResponseEntity<Object> getIssues(
             Authentication auth,
@@ -50,7 +53,7 @@ public class IssuesApi {
             @RequestParam(value = "filter") String filter,
             @RequestParam(value = "searchFor") String searchTerm
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/issues").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP GET /workspace/" + workspaceId + "/issues").start();
         Optional<String> accessTokenOptional = userService.getToken(((UserPrincipal) auth.getPrincipal()).getId(), span);
         if (accessTokenOptional.isEmpty()) {
             span.finish();
@@ -75,7 +78,7 @@ public class IssuesApi {
             @PathVariable(value = "projectId") int projectId,
             @RequestBody Issue issue
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP POST /workspace/" + workspaceId + "/projects/" + projectId + "/issues").start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP POST /workspace/" + workspaceId + "/projects/" + projectId + "/issues").start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
 
@@ -104,7 +107,7 @@ public class IssuesApi {
             @PathVariable(value = "issueId") int issueId,
             @RequestBody Issue issue
     ) {
-        Span span = ApiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/projects/" + projectId + "/issue/" + issueId).start();
+        Span span = apiTracer.getTracer().buildSpan("HTTP PUT /workspace/" + workspaceId + "/projects/" + projectId + "/issue/" + issueId).start();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Optional<String> accessTokenOptional = userService.getToken(userPrincipal.getId(), span);
 

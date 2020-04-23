@@ -32,9 +32,12 @@ public class WorkspaceRepository implements IWorkspaceRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private RepositoryTracer repositoryTracer;
+
     @Override
     public List<Workspace> getAllWorkspaces(Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Select All Workspaces").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Select All Workspaces").asChildOf(parentSpan).start();
         var workspaces = new ArrayList<>(jdbcTemplate.query(
                 "SELECT * FROM workspaces as workspaces INNER JOIN users AS users ON workspaces.created_by_user = users.id",
                 (rs, row) -> {
@@ -58,7 +61,7 @@ public class WorkspaceRepository implements IWorkspaceRepository {
 
     @Override
     public ArrayList<Integer> projectIdsForWorkspace(int workspaceId, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Select Project IDs from Workspace ID").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Select Project IDs from Workspace ID").asChildOf(parentSpan).start();
         ArrayList<Integer> projectIds = jdbcTemplate.queryForObject(
                 "SELECT workspace_data FROM workspaces WHERE id = ?;",
                 new Object[]{workspaceId},
@@ -95,7 +98,7 @@ public class WorkspaceRepository implements IWorkspaceRepository {
 
     @Override
     public Workspace createWorkspace(Workspace workspace, User user, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Insert New Workspace").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Insert New Workspace").asChildOf(parentSpan).start();
         String insertStatement = "INSERT INTO workspaces (name, created_by_user, description, workspace_data) VALUES (?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -116,7 +119,7 @@ public class WorkspaceRepository implements IWorkspaceRepository {
 
     @Override
     public void editWorkspace(Workspace updatedWorkspace, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Update Workspace").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Update Workspace").asChildOf(parentSpan).start();
         String deleteWorkspace = "UPDATE workspaces SET name = ?, description = ?, workspace_data = ? WHERE id = ?";
         Object[] params = new Object[]
                 {
@@ -132,7 +135,7 @@ public class WorkspaceRepository implements IWorkspaceRepository {
     }
 
     private PGobject getWorkspaceJsonbData(Workspace workspace, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("Get Workspace JSCNB Data").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("Get Workspace JSCNB Data").asChildOf(parentSpan).start();
         try {
             PGobject jsonObject = new PGobject();
             ObjectMapper objectMapper = new ObjectMapper();

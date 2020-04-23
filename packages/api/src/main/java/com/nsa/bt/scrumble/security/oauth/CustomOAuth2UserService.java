@@ -32,9 +32,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     ServiceTracer serviceTracer;
 
+    @Autowired
+    private SecurityTracer securityTracer;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
-        var span = SecurityTracer.getTracer().buildSpan("Load User").start();
+        var span = securityTracer.getTracer().buildSpan("Load User").start();
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 
         try {
@@ -51,7 +54,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User, Span parentSpan) {
-        var span = serviceTracer.getTracer().buildSpan("Process OAuth2 User").asChildOf(parentSpan).start();
+        var span = securityTracer.getTracer().buildSpan("Process OAuth2 User").asChildOf(parentSpan).start();
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
                 oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes()
         );
@@ -71,7 +74,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo, Span parentSpan) {
-        var span = serviceTracer.getTracer().buildSpan("Register New User").asChildOf(parentSpan).start();
+        var span = securityTracer.getTracer().buildSpan("Register New User").asChildOf(parentSpan).start();
         User user = new User();
 
         user.setServiceId(oAuth2UserInfo.getId());
