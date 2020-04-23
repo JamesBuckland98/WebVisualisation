@@ -17,7 +17,6 @@ What things you need to install:
 ```
 Node v12+
 NPM (or Yarn, but slight changes may need to be made to the package.json file)
-Docker (optional)
 ```
 
 ### Running
