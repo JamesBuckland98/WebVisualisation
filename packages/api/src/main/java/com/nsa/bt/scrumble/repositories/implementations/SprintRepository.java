@@ -126,19 +126,18 @@ public class SprintRepository implements ISprintRepository {
     public Sprint editSprint(int workspaceId, Sprint sprint, Span parentSpan) {
         var span = RepositoryTracer.getTracer().buildSpan("SQL Update Sprint").asChildOf(parentSpan).start();
         jdbcTemplate.update(
-                "UPDATE sprints SET title = ?, description = ?, status = ?, start_date = ?, due_date = ?, sprint_data = ? WHERE id = ?",
+                "UPDATE sprints SET title = ?, description = ?, status = ?, start_date = ?, due_date = ? WHERE id = ?",
                 new Object[]{
                         sprint.getTitle(),
                         sprint.getDescription(),
                         sprint.getStatus(),
                         sprint.getStartDate(),
                         sprint.getDueDate(),
-                        getSprintJsonbData(sprint, span),
                         sprint.getId()
                 },
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.DATE, Types.DATE, Types.OTHER, Types.INTEGER}
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.DATE, Types.DATE, Types.INTEGER}
         );
-        span.setTag("sql query", "UPDATE sprints SET title = ?, description = ?, status = ?, start_date = ?, due_date = ?, sprint_data = ? WHERE id = ?");
+        span.setTag("sql query", "UPDATE sprints SET title = ?, description = ?, status = ?, start_date = ?, due_date = ? WHERE id = ?");
         span.finish();
         return sprint;
     }
