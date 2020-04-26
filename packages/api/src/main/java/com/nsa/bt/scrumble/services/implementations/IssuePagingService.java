@@ -35,9 +35,12 @@ public class IssuePagingService implements IIssuePagingService {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    ServiceTracer serviceTracer;
+
     @Override
     public int getNextProjectId(int workspaceId, int prevProjectId, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Next Project ID").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Next Project ID").asChildOf(parentSpan).start();
         ArrayList<Integer> workspaceProjectIds = workspaceService.getProjectIdsForWorkspace(workspaceId, span);
         var nextProjectId = workspaceProjectIds.get(workspaceProjectIds.lastIndexOf(prevProjectId) + 1);
         span.finish();
@@ -46,7 +49,7 @@ public class IssuePagingService implements IIssuePagingService {
 
     public NextResource getNextResource(String requestUri, String linkHeader, int workspaceId,
                                         int currentProjectId, int prevPage, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Next Resource").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Next Resource").asChildOf(parentSpan).start();
         NextResource nextResource = new NextResource();
         nextResource.setPageSize(ISSUE_PAGE_SIZE);
 
@@ -79,7 +82,7 @@ public class IssuePagingService implements IIssuePagingService {
 
     @Override
     public String getNextProjectIssuesUri(String uri, int nextProjectId, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Next Resource").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Next Resource").asChildOf(parentSpan).start();
         // Alter query uri to just query a different project and set the page to 1
         uri = uri.replaceAll("(?<=projects/)(.*)(?=/issues)", Integer.toString(nextProjectId));
         uri = uri.replaceAll("(?<=page=)(.*)(?=&)", "1");
@@ -90,7 +93,7 @@ public class IssuePagingService implements IIssuePagingService {
     @Override
     public NextResource findNextProjectWithQueryResults(NextResource nextResource, int workspaceId,
                                                         int projectId, String uri, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Find Next Project with Query Results").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Find Next Project with Query Results").asChildOf(parentSpan).start();
         ArrayList<Issue> issues;
         boolean emptyResponse = true;
 
@@ -126,14 +129,14 @@ public class IssuePagingService implements IIssuePagingService {
 
     @Override
     public boolean isLastProject(int workspaceId, int projectId, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Is Last Project Check").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Is Last Project Check").asChildOf(parentSpan).start();
         ArrayList<Integer> workspaceProjectIds = workspaceService.getProjectIdsForWorkspace(workspaceId, span);
         span.finish();
         return workspaceProjectIds.lastIndexOf(projectId) == workspaceProjectIds.size() - 1;
     }
 
     private HttpEntity<String> getApplicationJsonHeaders(Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Retrieving Application Headers").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Retrieving Application Headers").asChildOf(parentSpan).start();
         var headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         span.finish();
@@ -143,7 +146,7 @@ public class IssuePagingService implements IIssuePagingService {
     @Override
     public IssuePageResult getPageOfIssues(int workspaceId, int projectId, int page, String filter,
                                            String searchTerm, String accessToken, Span parentSpan) {
-        var span = ServiceTracer.getTracer().buildSpan("Get Page of Issues").asChildOf(parentSpan).start();
+        var span = serviceTracer.getTracer().buildSpan("Get Page of Issues").asChildOf(parentSpan).start();
         // Initial call for a workspaces issues will pass number 0 for page and project id.
         // SB works out which project it should start from
         page = (page == 0) ? 1 : page;

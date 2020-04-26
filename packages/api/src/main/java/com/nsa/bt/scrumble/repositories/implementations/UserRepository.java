@@ -17,9 +17,12 @@ public class UserRepository implements IUserRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private RepositoryTracer repositoryTracer;
+
     @Override
     public User createUser(User user, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Insert New User").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Insert New User").asChildOf(parentSpan).start();
         String insertStatement = "INSERT INTO users (service_id, provider_id) VALUES (?, ?);";
         Object[] params = new Object[]{user.getServiceId(), user.getProviderId()};
         int[] types = new int[]{Types.INTEGER, Types.VARCHAR};
@@ -31,7 +34,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public Optional<User> findUserByServiceId(int serviceId, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Select User by Service ID").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Select User by Service ID").asChildOf(parentSpan).start();
         Optional<User> optionalUser = Optional.empty();
         try {
             optionalUser = jdbcTemplate.queryForObject(
@@ -53,7 +56,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public Optional<User> findUserById(int id, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Select User by ID").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Select User by ID").asChildOf(parentSpan).start();
         Optional<User> optionalUser = Optional.empty();
         try {
             optionalUser = jdbcTemplate.queryForObject(
@@ -75,7 +78,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public void addToken(int userId, String token, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Insert Token into User").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Insert Token into User").asChildOf(parentSpan).start();
         String insertStatement = "UPDATE users SET access_token = ? WHERE id = ?";
         Object[] params = new Object[]{token, userId};
         int[] types = new int[]{Types.VARCHAR, Types.INTEGER};
@@ -86,7 +89,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public void removeToken(int userId, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Remove Token from User").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Remove Token from User").asChildOf(parentSpan).start();
         String insertStatement = "UPDATE users SET access_token = null WHERE id = ?";
         Object[] params = new Object[]{userId};
         int[] types = new int[]{Types.INTEGER};
@@ -97,7 +100,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public Optional<String> getToken(int userId, Span parentSpan) {
-        var span = RepositoryTracer.getTracer().buildSpan("SQL Select Token from User").asChildOf(parentSpan).start();
+        var span = repositoryTracer.getTracer().buildSpan("SQL Select Token from User").asChildOf(parentSpan).start();
         Optional<String> stringOptional = Optional.empty();
         try {
             stringOptional = jdbcTemplate.queryForObject(

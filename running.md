@@ -7,33 +7,45 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 ```
-NodeJS v12
-NPM
-Java v11
+NodeJS v12+
+NPM (or Yarn, but slight changes may need to be made to the package.json file)
+Java v11+
 Docker/Docker-Compose (optional)
 PostgreSQL (optional)
 Flyway 6.3.2 (optional)
 ```
 
-### Running
+### Running in Production
+
+Look in each sub-project for running in a development context.
 
 #### API Server
 
-A Docker-Compose file is included in the project for easily setting up the database, should you choose to use it. If you do, run from the [API directory](packages/api) directory: 
+Firstly, you will need to copy some files from your development or CI system to prepare for deployment. You will need the Jar file, the [Flyway configuration file](packages/api/flyway.conf), the [database migrations](packages/api/src/main/resources/db/migration), the [Dockerfile](packages/api/Dockerfile), and the [docker-compose-prod.yml](packages/api/docker-compose-prod.yml). I recommend copying the migrations files to `db-migrations`, and the docker-compose file to `docker-compose`.
+
+You can build the Jar by running the following command from the [api](packages/api) directory:
+
+```
+./gradlew build
+```
+
+The jar can then be found in [api](packages/api/build/libs).
+
+Secondly, you will need to build the docker file. This will run Postgres, the Scrumble Api, and Jaeger. This can be done by running:
 
 ```
 docker-compose up --build -d
 ```
 
-If you choose to use some other Postgres source, you will need to edit the [application.properties](packages/api/src/main/resources/application.properties) file and provide your database configuration details.
+If you choose to use some other Postgres source, you will need to edit the [application-prod.properties](packages/api/src/main/resources/application-prod.properties) file and provide your database configuration details.
 
-To run database migrations, run the following command again from within the [API directory](packages/api)
+To run database migrations, run the following command:
 
 ```
 docker run --rm \
-    -v "$PWD/src/main/resources/db/migration/:/flyway/sql" \
+    -v "$PWD/db-migrations/:/flyway/sql" \
     -v "$PWD:/flyway/conf" \
-    --network="api_default" \
+    --network="scrumble_default" \
     flyway/flyway:latest-alpine migrate
 ```
 
@@ -41,35 +53,26 @@ The Docker image built for flyway will run "Flyway" without any arguments, makin
 
 ```
 alias flyway-cli='docker run --rm \
-    -v "$PWD/src/main/resources/db/migration/:/flyway/sql" \
+    -v "$PWD/db-migrations/:/flyway/sql" \
     -v "$PWD:/flyway/conf" \
-    --network="api_default" \
+    --network="scrumble_default" \
     flyway/flyway:latest-alpine';
 ```
 
+The network you use depends on the parent directory, so if the docker compose is indeed within `scrumble`, the command above will work just fine. Change it if you change the directory name.
+
 This Flyway container uses a configuration file [flyway.conf](packages/api/flyway.conf), which will need to be edited if you are not using the Docker-Compose database, but your own Postgres source.
-
-Once you have the database prepared, the API server can be started with the following commands:
-
-```
-cd packages/api
-./gradlew bootJar
-java -jar build/libs/scrumbleApi.jar
-```
 
 #### Front End Client
 
-To build the front end for a production build, use the following commands:
+To prepare the front end for deployment, in your development or CD environment, from the [web-app](packages/web-app) directory, run:
 
 ```
-cd packages/web-app
 npm install
 npm run build
 ```
 
-The output can be found in [build](packages/web-app/build). You can use this in a static site generator like Netlify or put it behind Nginx.
-
-To run a local server, you can use `npm run serve:prod` for a production-like server, or `npm run serve:dev` for a development one. Both will be accessible with [this address](http://localhost:3000).
+The output can be found in [build](packages/web-app/build). That output can then be used, in conjunction with the [Nginx config provided](exampleNginx.conf), to serve the front end.
 
 #### GitLab
 
@@ -87,6 +90,7 @@ You will need to alter values in [application.properties](packages/api/src/main/
 Please note, all properties listed here depend on the fact that spring.security.oauth2.client.registration.gitlab.client-name has been set to 'gitlab'.
 
 After registering Scrumble as an OAuth application, GitLab will give you an application ID and a secret. These values, along with the full callback URL you provided must be given to the following properties:
+
 ```
 spring.security.oauth2.client.registration.gitlab.client-id=<your_application_id>
 spring.security.oauth2.client.registration.gitlab.client-secret=<your_secret>

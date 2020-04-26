@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -16,6 +17,9 @@ public class TokenProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenProvider.class);
 
+    @Autowired
+    private SecurityTracer securityTracer;
+
     private final AppProperties appProperties;
 
     public TokenProvider(AppProperties appProperties) {
@@ -23,7 +27,7 @@ public class TokenProvider {
     }
 
     public String createToken(int userId, long validFor, Span parentSpan) {
-        var span = SecurityTracer.getTracer().buildSpan("Create a new JWT").asChildOf(parentSpan).start();
+        var span = securityTracer.getTracer().buildSpan("Create a new JWT").asChildOf(parentSpan).start();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + validFor);
         var token = Jwts.builder()
@@ -37,7 +41,7 @@ public class TokenProvider {
     }
 
     public Long getUserIdFromToken(String token, Span parentSpan) {
-        var span = SecurityTracer.getTracer().buildSpan("Return User ID from Token").asChildOf(parentSpan).start();
+        var span = securityTracer.getTracer().buildSpan("Return User ID from Token").asChildOf(parentSpan).start();
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
                 .parseClaimsJws(token)
@@ -48,7 +52,7 @@ public class TokenProvider {
     }
 
     public boolean isValidToken(String authToken, Span parentSpan) {
-        var span = SecurityTracer.getTracer().buildSpan("Checking Token Validity").asChildOf(parentSpan).start();
+        var span = securityTracer.getTracer().buildSpan("Checking Token Validity").asChildOf(parentSpan).start();
         try {
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
             span.finish();
