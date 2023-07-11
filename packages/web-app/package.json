@@ -22,7 +22,7 @@
     "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
-    "luxon": "^1.23.0",
+    "luxon": "^1.28.1",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^1.5.2",
     "mobx-sync": "^2.1.3",
